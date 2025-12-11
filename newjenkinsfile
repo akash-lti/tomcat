@@ -1,0 +1,48 @@
+pipeline {
+    agent { label 'dev' }
+
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                git 'https://github.com/aws-samples/eb-tomcat-snakes'
+            }
+        }
+    
+        stage('list all files in directory') {
+            steps {
+                sh 'ls -al'
+            }
+        }
+
+         stage('change file permisions') {
+            steps {
+                sh 'sudo chmod 777 build.sh'
+            }
+        }
+
+         stage('Execute the file') {
+            steps {
+                sh './build.sh'
+            }
+        }
+
+         stage('checking artifact') {
+            steps {
+                sh 'ls -al'
+            }
+        }
+
+        stage('removing defaults in tomcat9') {
+            steps {
+                sh 'sudo rm -rf /var/lib/tomcat9/webapps/*'
+            }
+        }
+
+        stage('Moving artifact to tomcat9') {
+            steps {
+                sh 'sudo mv ROOT.war /var/lib/tomcat9/webapps/'
+            }
+        }
+    }
+}
